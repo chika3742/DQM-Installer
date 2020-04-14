@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DQM_Installer"
         mc:Ignorable="d"
-        Title="DQM Installer" Height="446" Width="630" FontFamily="/DQM Installer;component/Fonts/#Rounded Mgen+ 2c medium" MinWidth="630" MinHeight="450" ResizeMode="CanMinimize">
+        Title="DQM Installer" Height="511.333" Width="630" FontFamily="/DQM Installer;component/Fonts/#Rounded Mgen+ 2c medium" MinWidth="630" MinHeight="450" ResizeMode="CanMinimize">
     <Window.Resources>
         <Storyboard x:Key="BtnAnimation">
             <ThicknessAnimationUsingKeyFrames
@@ -85,8 +85,8 @@
         <Button x:Name="ReferForgeLib" Content="参照" HorizontalAlignment="Right" Margin="0,215,30,0" VerticalAlignment="Top" Width="60" Height="30" FontSize="16" Padding="0,4" Click="ReferLib_Click"/>
         <TextBlock HorizontalAlignment="Center" Margin="10,7,110,0" TextWrapping="Wrap" Text="右のボタンをクリックして動画をご覧になってからご利用ください。" VerticalAlignment="Top" Foreground="Red" FontWeight="Bold" TextDecorations="{x:Null}" FontSize="16" Width="502" TextAlignment="Center" Padding="0"/>
         <Button Content="YouTube" HorizontalAlignment="Right" Margin="0,7,30,0" VerticalAlignment="Top" Width="75" Height="24" Padding="0" Click="YouTubeButton_Click"/>
-        <Label Content="スキンファイル(オプション)" HorizontalAlignment="Left" Margin="30,248,0,0" VerticalAlignment="Top" FontSize="16" Height="41" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="Skin" HorizontalAlignment="Right" Height="41" Margin="0,248,95,0" VerticalAlignment="Top" Width="242" Padding="0,0,0,3" FontSize="16" MaxLines="1" Drop="OnDropped" PreviewDragOver="TextBox_PreviewDragOver"/>
+        <Label x:Name="TextSkinFile" Content="スキンファイル(オプション)" HorizontalAlignment="Left" Margin="30,248,0,0" VerticalAlignment="Top" FontSize="16" Height="41" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="Skin" HorizontalAlignment="Right" Height="41" Margin="0,248,95,0" VerticalAlignment="Top" Width="242" Padding="0,0,0,3" FontSize="16" MaxLines="1" Drop="OnDropped" PreviewDragOver="TextBox_PreviewDragOver" IsReadOnly="True"/>
         <Rectangle HorizontalAlignment="Center" Height="2" Margin="0,77,360,0" VerticalAlignment="Top" Width="200" Fill="#FF898989"/>
         <Rectangle HorizontalAlignment="Center" Height="2" Margin="0,119,360,0" VerticalAlignment="Top" Width="200" Fill="#FF898989"/>
         <Rectangle HorizontalAlignment="Center" Height="2" Margin="0,162,360,0" VerticalAlignment="Top" Width="200" Fill="#FF898989"/>
@@ -96,9 +96,18 @@
         <ProgressBar x:Name="ProgressBar" HorizontalAlignment="Left" Height="23" Margin="360,0,0,18" VerticalAlignment="Bottom" Width="250" Opacity="0"/>
         <Label x:Name="ProgressLabel" Content="Preparing..." HorizontalAlignment="Left" Margin="360,0,0,18" VerticalAlignment="Bottom" Height="23" VerticalContentAlignment="Center" Padding="5,0" Width="250" HorizontalContentAlignment="Center" Opacity="0" Foreground="#DDFFFFFF"/>
         <Rectangle HorizontalAlignment="Center" Height="2" Margin="32,287,392,0" VerticalAlignment="Top" Width="200" Fill="#FF898989"/>
-        <Label Content="ランチャーでのバージョン表記" HorizontalAlignment="Left" Margin="30,289,0,0" VerticalAlignment="Top" FontSize="16" Height="41" VerticalContentAlignment="Center"/>
+        <Label x:Name="TextVersionName" Content="ランチャーでのバージョン表記" HorizontalAlignment="Left" Margin="30,289,0,0" VerticalAlignment="Top" FontSize="16" Height="41" VerticalContentAlignment="Center"/>
         <TextBox x:Name="DisplayVersion" HorizontalAlignment="Right" Height="41" Margin="0,289,95,0" VerticalAlignment="Top" Width="242" Padding="0,0,0,3" FontSize="16" MaxLines="1" Text="DQMV v(バージョン)"/>
         <Rectangle HorizontalAlignment="Center" Height="2" Margin="33,330,391,0" VerticalAlignment="Top" Width="200" Fill="#FF898989"/>
         <Button x:Name="ReferSkin" Content="参照" HorizontalAlignment="Right" Margin="0,259,30,0" VerticalAlignment="Top" Width="60" Height="30" FontSize="16" Padding="0,4" Click="ReferSkin_Click"/>
+        <ComboBox x:Name="ModeComboBox" HorizontalAlignment="Right" Margin="0,0,167,97" FontSize="18" VerticalAlignment="Bottom" Width="275" Height="41" SelectedIndex="0" VerticalContentAlignment="Center" SelectionChanged="ComboBox_SelectionChanged">
+            <ComboBox.Items>
+                <ComboBoxItem ToolTip="初回にDQMをインストールする場合のオプションです。" FontSize="18">通常インストール</ComboBoxItem>
+                <ComboBoxItem ToolTip="DQMをアップデートする際のオプションです。" FontSize="18">アップデート</ComboBoxItem>
+                <ComboBoxItem ToolTip="スキンのみを設定する場合のオプションです。" FontSize="18">スキンの設定</ComboBoxItem>
+                <ComboBoxItem ToolTip="マルチサーバーファイルに対してインストールする場合のオプションです。" FontSize="18" IsEnabled="False">マルチサーバーファイル(未実装)</ComboBoxItem>
+            </ComboBox.Items>
+        </ComboBox>
+        <Label Content="モード選択" HorizontalAlignment="Left" Margin="33,0,0,97" VerticalAlignment="Bottom" FontSize="18" Height="41" VerticalContentAlignment="Center"/>
     </Grid>
 </Window>

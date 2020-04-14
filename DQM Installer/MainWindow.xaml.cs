@@ -22,6 +22,9 @@ namespace DQM_Installer
     /// </summary>
     public partial class MainWindow : Window
     {
+        string mcPath = Environment.GetEnvironmentVariable("appdata") + "\\.minecraft";
+        string exePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        string tempPath = Path.Combine(Environment.GetEnvironmentVariable("temp"), "extract-dqm");
 
         string procedure = "";
         public MainWindow()
@@ -113,6 +116,40 @@ namespace DQM_Installer
             ReferSkin.IsEnabled = to;
             DisplayVersion.IsEnabled = to;
             InstallBtn.IsEnabled = to;
+            ModeComboBox.IsEnabled = to;
+
+            var mode = ModeComboBox.SelectedIndex;
+            TextSkinFile.Content = "スキンファイル(オプション)";
+            TextVersionName.Content = "ランチャーでのバージョン表記";
+            switch (mode)
+            {
+                case 1:
+                    TextVersionName.Content = "バージョン名";
+                    Sound.IsEnabled = false;
+                    ReferSound.IsEnabled = false;
+                    Forge.IsEnabled = false;
+                    ReferForge.IsEnabled = false;
+                    ForgeLib.IsEnabled = false;
+                    ReferForgeLib.IsEnabled = false;
+                    Skin.IsEnabled = false;
+                    ReferSkin.IsEnabled = false;
+                    break;
+                case 2:
+                    TextSkinFile.Content = "スキンファイル";
+                    TextVersionName.Content = "バージョン名";
+                    PremiseMod.IsEnabled = false;
+                    ReferPremiseMod.IsEnabled = false;
+                    BodyMod.IsEnabled = false;
+                    ReferBodyMod.IsEnabled = false;
+                    Sound.IsEnabled = false;
+                    ReferSound.IsEnabled = false;
+                    Forge.IsEnabled = false;
+                    ReferForge.IsEnabled = false;
+                    ForgeLib.IsEnabled = false;
+                    ReferForgeLib.IsEnabled = false;
+                    break;
+            }
+
             if (to)
             {
                 InstallBtn.Content = "インストール";
@@ -129,6 +166,53 @@ namespace DQM_Installer
         private void Install_Click(object sender, RoutedEventArgs e)
         {
             ChangeEnabled(false);
+            ProgressBar.Maximum = 9;
+            ProgressBar.Value = 0;
+
+            if (ModeComboBox.SelectedIndex == 2)
+            {
+                var strBuilder = new StringBuilder();
+                
+                if (Skin.Text == "") strBuilder.AppendLine("スキンのパスを入力してください。");
+                else if (!File.Exists(Skin.Text)) strBuilder.AppendLine("スキンに選択されたファイルは存在しません。");
+                if (DisplayVersion.Text == "") strBuilder.AppendLine("バージョンIDを入力してください。");
+                else if (!File.Exists(Path.Combine(mcPath, "versions", DisplayVersion.Text, $"{DisplayVersion.Text}.jar")))
+                {
+                    strBuilder.AppendLine("入力されたバージョン名を持つバージョンは見つかりませんでした。");
+                }
+                if (strBuilder.ToString() != "")
+                {
+                    MessageBox.Show(strBuilder.ToString(), "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ChangeEnabled(true);
+                }
+                else
+                {
+                    OnlySetSkin();
+                }
+
+                return;
+            } else if (ModeComboBox.SelectedIndex == 1)
+            {
+                var msgBuilder2 = new StringBuilder();
+                if (PremiseMod.Text == "") msgBuilder2.AppendLine("前提MODを選択してください。");
+                else if (!File.Exists(PremiseMod.Text)) msgBuilder2.AppendLine("前提MODに選択されたファイルは存在しません。");
+                if (BodyMod.Text == "") msgBuilder2.AppendLine("本体MODを選択してください。");
+                else if (!File.Exists(BodyMod.Text)) msgBuilder2.AppendLine("本体MODに選択されたファイルは存在しません。");
+                if (DisplayVersion.Text == "") msgBuilder2.AppendLine("バージョンIDを入力してください。");
+                else if (!File.Exists(Path.Combine(mcPath, "versions", DisplayVersion.Text, $"{DisplayVersion.Text}.jar")))
+                {
+                    msgBuilder2.AppendLine("入力されたバージョン名を持つバージョンは見つかりませんでした。");
+                }
+                if (msgBuilder2.ToString() != "")
+                {
+                    MessageBox.Show("入力に不備があります。\n\n" + msgBuilder2.ToString(), "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ChangeEnabled(true);
+                    return;
+                }
+                ProgressBar.Maximum = 3;
+                Update();
+                return;
+            }
 
             var msgBuilder = new StringBuilder();
             if (PremiseMod.Text == "") msgBuilder.AppendLine("前提MODを選択してください。");
@@ -152,9 +236,22 @@ namespace DQM_Installer
                 ChangeEnabled(true);
                 return;
             }
-            ProgressBar.Maximum = 9;
 
             Install();
+        }
+
+        private async void Update()
+        {
+            var premisePath = PremiseMod.Text;
+            var displayVersion = DisplayVersion.Text;
+            var jarPath = $"{mcPath}\\versions\\{displayVersion}\\{displayVersion}.jar";
+            var bodyPath = BodyMod.Text;
+            await Task.Run(() =>
+            {
+                ExtractPreAndBody(premisePath, jarPath, bodyPath, true);
+                MessageBox.Show("アップデートが完了しました。", "完了", MessageBoxButton.OK, MessageBoxImage.Information);
+                CancelInstalling();
+            });
         }
 
         private async void Install()
@@ -162,8 +259,6 @@ namespace DQM_Installer
             await Task.Run(() => {
                 try
                 {
-                    var mcPath = Environment.GetEnvironmentVariable("appdata") + "\\.minecraft";
-                    var exePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
                     SendProgress("DQM用バージョンを作成しています。");
 
@@ -256,13 +351,15 @@ namespace DQM_Installer
 
                         File.WriteAllText(launcherProfilePath, jObject.ToString());
 
-
-                        var tempPath = Path.Combine(Environment.GetEnvironmentVariable("temp"), "extract-dqm");
-
                         SendProgress("クリーンアップ中です。");
                         if (Directory.Exists(tempPath))
                         {
-                            Directory.Delete("\\\\.\\" + tempPath, true);
+                            try
+                            {
+                                Directory.Delete(Path.Combine(tempPath, "forge"), true);
+                                Directory.Delete(Path.Combine(tempPath, "premise"), true);
+                                Directory.Delete(Path.Combine(tempPath, "skin"), true);
+                            } catch(Exception e) { }
                         }
 
                         UpdateProgressBar(2);
@@ -277,34 +374,30 @@ namespace DQM_Installer
                         DeleteEntryFromZipFile(jarPath, "META-INF");
                         UpdateProgressBar(4);
 
-                        procedure = "xp";
-                        SendProgress("前提MODの展開中です。");
-                        ExtractToDirectoryWithSevenZip(premisePath, $"{tempPath}\\premise");
-                        UpdateProgressBar(5);
-                        procedure = "aj";
-                        SendProgress("JARファイルの作成中です。");
-                        AddEntryToZipFileWithSevenZip(jarPath, $"{tempPath}\\premise\\*");
-                        UpdateProgressBar(6);
-
+                        ExtractPreAndBody(premisePath, jarPath, bodyPath, false);
 
                         using (var seArchive = ZipFile.OpenRead(sePath))
                         {
                             SendProgress("DQM SE/BGMの展開中です。");
                             seArchive.ExtractToDirectory(mcPath, true);
                         }
-                        UpdateProgressBar(7);
-
-                        SendProgress("本体MODのコピー中です。");
-                        Directory.CreateDirectory(Path.Combine(mcPath, "mods"));
-                        File.Copy(bodyPath, mcPath + $"\\mods\\{bodyPath.Split('\\').Last()}", true);
                         UpdateProgressBar(8);
-                        SendProgress("バニラSEのダウンロード中です。");
 
-                        var soundClient = new WebClient();
-                        soundClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(MCSoundDownloadProgressChanged);
-                        soundClient.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(OnMCSoundDownloadCompleted);
+                        
+                        if (!File.Exists(Path.Combine(tempPath, "resources.zip")))
+                        {
+                            SendProgress("バニラSEのダウンロード中です。");
 
-                        soundClient.DownloadFileAsync(new Uri("https://app.chikach.net/dist/resources.zip"), Path.Combine(tempPath, "resources.zip"));
+                            var soundClient = new WebClient();
+                            soundClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(MCSoundDownloadProgressChanged);
+                            soundClient.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(OnMCSoundDownloadCompleted);
+
+                            soundClient.DownloadFileAsync(new Uri("https://app.chikach.net/dist/resources.zip"), Path.Combine(tempPath, "resources.zip"));
+                        }
+                        else
+                        {
+                            OnMCSoundDownloadCompleted(null, null);
+                        }
                     }
                 }
                 catch (Exception e)
@@ -315,6 +408,25 @@ namespace DQM_Installer
                 
                
             });
+        }
+
+        private void ExtractPreAndBody(string premisePath, string jarPath, string bodyPath, bool isUpdate)
+        {
+            int baseNum;
+            if (isUpdate) baseNum = 0; else baseNum = 4;
+            procedure = "xp";
+            SendProgress("前提MODの展開中です。");
+            ExtractToDirectoryWithSevenZip(premisePath, $"{tempPath}\\premise");
+            UpdateProgressBar(baseNum + 1);
+            procedure = "aj";
+            SendProgress("JARファイルの作成中です。");
+            AddEntryToZipFileWithSevenZip(jarPath, $"{tempPath}\\premise\\*");
+            UpdateProgressBar(baseNum + 2);
+
+            SendProgress("本体MODのコピー中です。");
+            Directory.CreateDirectory(Path.Combine(mcPath, "mods"));
+            File.Copy(bodyPath, mcPath + $"\\mods\\{bodyPath.Split('\\').Last()}", true);
+            UpdateProgressBar(baseNum + 3);
         }
 
         private void CancelInstalling()
@@ -434,7 +546,7 @@ namespace DQM_Installer
         {
             await Task.Run(() =>
             {
-                if (e.Error != null)
+                if (e != null && e.Error != null)
                 {
                     ShowErrorMessage($"Minecraft SEファイルのダウンロードに失敗しました。({e.Error.Message})");
                     return;
@@ -445,65 +557,88 @@ namespace DQM_Installer
                 {
                     f.ExtractToDirectory(Environment.GetEnvironmentVariable("appdata") + "\\.minecraft", true);
                 }
-                var launcherProfilePath = Environment.GetEnvironmentVariable("appdata") + "\\.minecraft\\launcher_profiles.json";
-                if (!File.Exists(launcherProfilePath))
-                {
-                    ShowErrorMessage("プロファイル一覧ファイルが見つかりません。ランチャーを1回も起動していない可能性があります。もう一度動画を見てやり直してみてください。");
-                    CancelInstalling();
-                    return;
-                }
-                var reader = new StreamReader(launcherProfilePath, Encoding.GetEncoding("UTF-8"));
-                var json = reader.ReadToEnd();
-                reader.Close();
 
-                var jObject = JObject.Parse(json);
+                SetSkin();
+            });
+        }
 
-                var skinPath = "";
-                var displayVersion = "";
-                Dispatcher.Invoke(() =>
-                {
-                    skinPath = Skin.Text;
-                    displayVersion = DisplayVersion.Text;
-                });
+        private void SetSkin()
+        {
+            SendProgress("スキンの設定中です。");
+            UpdateProgressBar(9);
 
-                UpdateProgressBar(9);
+            //Directory.Delete(Path.Combine(Environment.GetEnvironmentVariable("temp"), "extract-dqm"), true);
 
-                SendProgress("スキンの設定中です。");
+            var skinPath = "";
+            var displayVersion = "";
+            Dispatcher.Invoke(() =>
+            {
+                skinPath = Skin.Text;
+                displayVersion = DisplayVersion.Text;
+            });
 
-                var properties = ((JObject)jObject["authenticationDatabase"]).Descendants().OfType<JProperty>();
-                var accountList = new List<string>();
-                foreach (var prop in properties)
-                {
-                    if (prop.Name == "displayName") accountList.Add((string)prop.Value);
-                }
-                if (accountList.Count() > 1)
-                {
-                    var s = new StringBuilder();
-                    foreach (var item in accountList)
-                    {
-                        s.AppendLine(item);
-                    }
-                    MessageBox.Show($"Minecraftランチャーにログインされているアカウントにプレイヤーが複数存在するため、以下のすべてのプレイヤーに対してスキンを設定します。\n\n{s.ToString()}", "スキン設定", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else if (accountList.Count() == 0)
-                {
-                    MessageBox.Show($"Minecraftランチャーにログインされているアカウントが存在しません。そのため、スキン設定ができませんでした。", "スキン設定", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+            var launcherProfilePath = Environment.GetEnvironmentVariable("appdata") + "\\.minecraft\\launcher_profiles.json";
+            if (!File.Exists(launcherProfilePath))
+            {
+                ShowErrorMessage("プロファイル一覧ファイルが見つかりません。ランチャーを1回も起動していない可能性があります。もう一度動画を見てやり直してみてください。");
+                CancelInstalling();
+                return;
+            }
+            var reader = new StreamReader(launcherProfilePath, Encoding.GetEncoding("UTF-8"));
+            var json = reader.ReadToEnd();
+            reader.Close();
 
-                var skinTempPath = Path.Combine(Environment.GetEnvironmentVariable("temp"), "extract-dqm", "skin");
-                Directory.CreateDirectory(Path.Combine(skinTempPath, "mob"));
+            var jObject = JObject.Parse(json);
+
+            var x = ((JObject)jObject["authenticationDatabase"]);
+            if (x == null)
+            {
+                MessageBox.Show($"Minecraftランチャーにログインされているアカウントが存在しません。そのため、スキン設定ができませんでした。", "スキン設定", MessageBoxButton.OK, MessageBoxImage.Error);
+                CancelInstalling();
+                return;
+            }
+            var properties = x.Descendants().OfType<JProperty>();
+            var accountList = new List<string>();
+            
+            foreach (var prop in properties)
+            {
+                if (prop.Name == "displayName") accountList.Add((string)prop.Value);
+            }
+            if (accountList.Count() > 1)
+            {
+                var s = new StringBuilder();
                 foreach (var item in accountList)
                 {
-                    File.Copy(skinPath, Path.Combine(skinTempPath, $"mob\\{item}.png"));
+                    s.AppendLine(item);
                 }
+                MessageBox.Show($"Minecraftランチャーにログインされているアカウントにプレイヤーが複数存在するため、以下のすべてのプレイヤーに対してスキンを設定します。\n\n{s.ToString()}", "スキン設定", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else if (accountList.Count() == 0)
+            {
+                MessageBox.Show($"Minecraftランチャーにログインされているアカウントが存在しません。そのため、スキン設定ができませんでした。", "スキン設定", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
-                AddEntryToZipFileWithSevenZip(Path.Combine(Environment.GetEnvironmentVariable("appdata"), ".minecraft\\versions", displayVersion, displayVersion + ".jar"), Path.Combine(skinTempPath, "*"));
+            var skinTempPath = Path.Combine(Environment.GetEnvironmentVariable("temp"), "extract-dqm", "skin");
+            Directory.CreateDirectory(Path.Combine(skinTempPath, "mob"));
+            foreach (var item in accountList)
+            {
+                File.Copy(skinPath, Path.Combine(skinTempPath, $"mob\\{item}.png"), true);
+            }
 
-                Dispatcher.Invoke(() =>
-                {
-                    MessageBox.Show("インストールが完了しました。", "完了", MessageBoxButton.OK, MessageBoxImage.Information);
-                    CancelInstalling();
-                });
+            AddEntryToZipFileWithSevenZip(Path.Combine(Environment.GetEnvironmentVariable("appdata"), ".minecraft\\versions", displayVersion, displayVersion + ".jar"), Path.Combine(skinTempPath, "*"));
+
+            Dispatcher.Invoke(() =>
+            {
+                MessageBox.Show("インストールが完了しました。", "完了", MessageBoxButton.OK, MessageBoxImage.Information);
+                CancelInstalling();
+            });
+        }
+
+        private async void OnlySetSkin()
+        {
+            await Task.Run(() =>
+            {
+                SetSkin();
             });
         }
 
@@ -566,6 +701,16 @@ namespace DQM_Installer
             {
                 Skin.Text = path;
             }
+        }
+
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeEnabled(true);
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ChangeEnabled(true);
         }
     }
 

@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("DQM Installer")]
 [assembly: AssemblyDescription("DQMの半自動インストーラーです。")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("chikach.")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("DQM Installer")]
-[assembly: AssemblyCopyright("Copyright ©  2019 chikach.")]
+[assembly: AssemblyCopyright("Copyright ©  2020 chikach.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -52,6 +52,6 @@ using System.Windows;
 // 既定値にすることができます:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.2")]
+[assembly: AssemblyFileVersion("1.2.0")]
 [assembly: NeutralResourcesLanguage("ja-JP")]
 
