@@ -5,10 +5,6 @@ VisualStudioVersion = 16.0.29201.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DQM Installer", "DQM Installer\DQM Installer.csproj", "{C9F42A9A-0A26-4A07-BD5B-DAF415882A7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dropon", "..\Dropon-for-Windows\Dropon.csproj", "{5E37B909-DD43-48AC-A44A-6EA7F62150FD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AUEncoder", "..\AviUtl-Encoder\AUEncoder.csproj", "{7CCF50F7-CEE1-489F-891A-B915E026DA39}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,14 +15,6 @@ Global
 		{C9F42A9A-0A26-4A07-BD5B-DAF415882A7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9F42A9A-0A26-4A07-BD5B-DAF415882A7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9F42A9A-0A26-4A07-BD5B-DAF415882A7D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5E37B909-DD43-48AC-A44A-6EA7F62150FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5E37B909-DD43-48AC-A44A-6EA7F62150FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5E37B909-DD43-48AC-A44A-6EA7F62150FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5E37B909-DD43-48AC-A44A-6EA7F62150FD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7CCF50F7-CEE1-489F-891A-B915E026DA39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7CCF50F7-CEE1-489F-891A-B915E026DA39}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7CCF50F7-CEE1-489F-891A-B915E026DA39}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7CCF50F7-CEE1-489F-891A-B915E026DA39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

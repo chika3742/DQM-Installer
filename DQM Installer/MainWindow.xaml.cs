@@ -577,20 +577,20 @@ namespace DQM_Installer
                 displayVersion = DisplayVersion.Text;
             });
 
-            var launcherProfilePath = Environment.GetEnvironmentVariable("appdata") + "\\.minecraft\\launcher_profiles.json";
-            if (!File.Exists(launcherProfilePath))
+            var launcherAccountsPath = Environment.GetEnvironmentVariable("appdata") + "\\.minecraft\\launcher_accounts.json";
+            if (!File.Exists(launcherAccountsPath))
             {
-                ShowErrorMessage("プロファイル一覧ファイルが見つかりません。ランチャーを1回も起動していない可能性があります。もう一度動画を見てやり直してみてください。");
+                ShowErrorMessage("アカウントデータファイルが見つかりません。ランチャーを1回も起動していない可能性があります。もう一度動画を見てやり直してみてください。");
                 CancelInstalling();
                 return;
             }
-            var reader = new StreamReader(launcherProfilePath, Encoding.GetEncoding("UTF-8"));
+            var reader = new StreamReader(launcherAccountsPath, Encoding.GetEncoding("UTF-8"));
             var json = reader.ReadToEnd();
             reader.Close();
 
             var jObject = JObject.Parse(json);
 
-            var x = ((JObject)jObject["authenticationDatabase"]);
+            var x = ((JObject)jObject["accounts"]);
             if (x == null)
             {
                 MessageBox.Show($"Minecraftランチャーにログインされているアカウントが存在しません。そのため、スキン設定ができませんでした。", "スキン設定", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -602,7 +602,7 @@ namespace DQM_Installer
             
             foreach (var prop in properties)
             {
-                if (prop.Name == "displayName") accountList.Add((string)prop.Value);
+                if (prop.Name == "minecraftProfile") accountList.Add((string)((JObject)prop.Value)["name"]);
             }
             if (accountList.Count() > 1)
             {
@@ -711,6 +711,21 @@ namespace DQM_Installer
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ChangeEnabled(true);
+        }
+
+        private void DLMod_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("https://dqm4mod.wixsite.com/home");
+        }
+
+        private void DLForge_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("http://adfoc.us/serve/?id=27122854926913");
+        }
+
+        private void DLForgeLib_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("http://files.minecraftforge.net/fmllibs/fml_libs15.zip");
         }
     }
 
