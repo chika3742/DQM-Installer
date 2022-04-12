@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Security;
 using System.Windows;
@@ -26,13 +27,13 @@ namespace DQM_Installer
         string exePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
         string tempPath = Path.Combine(Environment.GetEnvironmentVariable("temp"), "extract-dqm");
 
-        string procedure = "";
+        Procedure procedure;
         public MainWindow()
         {
             InitializeComponent();
 
             window.Title = "DQM 半自動インストーラー " + FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion;
-            Skin.Text = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "assets\\steve.png");
+            SkinTextBox.Text = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "assets\\steve.png");
         }
 
         private void YouTubeButton_Click(object sender, RoutedEventArgs e)
@@ -40,56 +41,49 @@ namespace DQM_Installer
             Process.Start("https://youtu.be/Dgy8i-YAH48");
         }
 
-        private void ReferPremiseMOD_Click(object sender, RoutedEventArgs e)
+        private void BrowsePremiseModButton_Click(object sender, RoutedEventArgs e)
         {
             var path = ShowFilePicker("DQM 前提MOD|*.zip", "DQM 前提MODの選択");
             if (path != null)
             {
-                PremiseMod.Text = path;
+                PremiseModTextBox.Text = path;
             }
         }
 
-        private void ReferBodyMOD_Click(object sender, RoutedEventArgs e)
+        private void BrowseBodyModButton_Click(object sender, RoutedEventArgs e)
         {
             var path = ShowFilePicker("DQM 本体MOD|*.zip", "DQM 本体MODの選択");
             if (path != null)
             {
-                BodyMod.Text = path;
+                BodyModTextBox.Text = path;
             }
         }
 
-        private void ReferDQMSound_Click(object sender, RoutedEventArgs e)
+        private void BrowseBgmButton_Click(object sender, RoutedEventArgs e)
         {
             var path = ShowFilePicker("DQM 音声・BGM|*.zip", "DQM 音声・BGMの選択");
             if (path != null)
             {
-                Sound.Text = path;
+                BgmTextBox.Text = path;
             }
         }
 
-        private void ReferForge_Click(object sender, RoutedEventArgs e)
+        private void BrowseForgeButton_Click(object sender, RoutedEventArgs e)
         {
             var path = ShowFilePicker("Forge 1.5.2|*.zip", "Forgeの選択");
             if (path != null)
             {
-                Forge.Text = path;
-            }
-        }
-
-        private void ReferLib_Click(object sender, RoutedEventArgs e)
-        {
-            var path = ShowFilePicker("Forge ライブラリファイル|*.zip", "Forge libファイルの選択");
-            if (path != null)
-            {
-                ForgeLib.Text = path;
+                ForgeTextBox.Text = path;
             }
         }
 
         private string ShowFilePicker(string filter, string title)
         {
-            var picker = new OpenFileDialog();
-            picker.Filter = filter;
-            picker.Title = title;
+            var picker = new OpenFileDialog
+            {
+                Filter = filter,
+                Title = title
+            };
             if (picker.ShowDialog() == true)
             {
                 return picker.FileName;
@@ -102,51 +96,49 @@ namespace DQM_Installer
 
         private void ChangeEnabled(bool to)
         {
-            PremiseMod.IsEnabled = to;
-            ReferPremiseMod.IsEnabled = to;
-            BodyMod.IsEnabled = to;
-            ReferBodyMod.IsEnabled = to;
-            Sound.IsEnabled = to;
-            ReferSound.IsEnabled = to;
-            Forge.IsEnabled = to;
-            ReferForge.IsEnabled = to;
-            ForgeLib.IsEnabled = to;
-            ReferForgeLib.IsEnabled = to;
-            Skin.IsEnabled = to;
-            ReferSkin.IsEnabled = to;
-            DisplayVersion.IsEnabled = to;
+            if (!IsInitialized)
+            {
+                return;
+            }
+            PremiseModTextBox.IsEnabled = to;
+            BrowsePremiseModButton.IsEnabled = to;
+            BodyModTextBox.IsEnabled = to;
+            BrowseBodyModButton.IsEnabled = to;
+            BgmTextBox.IsEnabled = to;
+            BrowseBgmButton.IsEnabled = to;
+            ForgeTextBox.IsEnabled = to;
+            BrowseForgeButton.IsEnabled = to;
+            SkinTextBox.IsEnabled = to;
+            BrowseSkinButton.IsEnabled = to;
+            VersionNameTextBox.IsEnabled = to;
             InstallBtn.IsEnabled = to;
             ModeComboBox.IsEnabled = to;
 
             var mode = ModeComboBox.SelectedIndex;
-            TextSkinFile.Content = "スキンファイル(オプション)";
-            TextVersionName.Content = "ランチャーでのバージョン表記";
+            SkinLabel.Content = "スキン";
+            VersionNameLabel.Content = "ランチャーでのバージョン表記";
             switch (mode)
             {
                 case 1:
-                    TextVersionName.Content = "バージョン名";
-                    Sound.IsEnabled = false;
-                    ReferSound.IsEnabled = false;
-                    Forge.IsEnabled = false;
-                    ReferForge.IsEnabled = false;
-                    ForgeLib.IsEnabled = false;
-                    ReferForgeLib.IsEnabled = false;
-                    Skin.IsEnabled = false;
-                    ReferSkin.IsEnabled = false;
+                    VersionNameLabel.Content = "バージョン名";
+                    BgmTextBox.IsEnabled = false;
+                    BrowseBgmButton.IsEnabled = false;
+                    ForgeTextBox.IsEnabled = false;
+                    BrowseForgeButton.IsEnabled = false;
+                    SkinTextBox.IsEnabled = false;
+                    BrowseSkinButton.IsEnabled = false;
                     break;
                 case 2:
-                    TextSkinFile.Content = "スキンファイル";
-                    TextVersionName.Content = "バージョン名";
-                    PremiseMod.IsEnabled = false;
-                    ReferPremiseMod.IsEnabled = false;
-                    BodyMod.IsEnabled = false;
-                    ReferBodyMod.IsEnabled = false;
-                    Sound.IsEnabled = false;
-                    ReferSound.IsEnabled = false;
-                    Forge.IsEnabled = false;
-                    ReferForge.IsEnabled = false;
-                    ForgeLib.IsEnabled = false;
-                    ReferForgeLib.IsEnabled = false;
+                    SkinLabel.Content = "スキンファイル";
+                    VersionNameLabel.Content = "バージョン名";
+                    PremiseModTextBox.IsEnabled = false;
+                    BrowsePremiseModButton.IsEnabled = false;
+                    BodyModTextBox.IsEnabled = false;
+                    BrowseBodyModButton.IsEnabled = false;
+                    BgmTextBox.IsEnabled = false;
+                    BrowseBgmButton.IsEnabled = false;
+                    ForgeTextBox.IsEnabled = false;
+                    BrowseForgeButton.IsEnabled = false;
                     break;
             }
 
@@ -173,10 +165,10 @@ namespace DQM_Installer
             {
                 var strBuilder = new StringBuilder();
                 
-                if (Skin.Text == "") strBuilder.AppendLine("スキンのパスを入力してください。");
-                else if (!File.Exists(Skin.Text)) strBuilder.AppendLine("スキンに選択されたファイルは存在しません。");
-                if (DisplayVersion.Text == "") strBuilder.AppendLine("バージョンIDを入力してください。");
-                else if (!File.Exists(Path.Combine(mcPath, "versions", DisplayVersion.Text, $"{DisplayVersion.Text}.jar")))
+                if (SkinTextBox.Text == "") strBuilder.AppendLine("スキンのパスを入力してください。");
+                else if (!File.Exists(SkinTextBox.Text)) strBuilder.AppendLine("スキンに選択されたファイルは存在しません。");
+                if (VersionNameTextBox.Text == "") strBuilder.AppendLine("バージョンIDを入力してください。");
+                else if (!File.Exists(Path.Combine(mcPath, "versions", VersionNameTextBox.Text, $"{VersionNameTextBox.Text}.jar")))
                 {
                     strBuilder.AppendLine("入力されたバージョン名を持つバージョンは見つかりませんでした。");
                 }
@@ -194,12 +186,12 @@ namespace DQM_Installer
             } else if (ModeComboBox.SelectedIndex == 1)
             {
                 var msgBuilder2 = new StringBuilder();
-                if (PremiseMod.Text == "") msgBuilder2.AppendLine("前提MODを選択してください。");
-                else if (!File.Exists(PremiseMod.Text)) msgBuilder2.AppendLine("前提MODに選択されたファイルは存在しません。");
-                if (BodyMod.Text == "") msgBuilder2.AppendLine("本体MODを選択してください。");
-                else if (!File.Exists(BodyMod.Text)) msgBuilder2.AppendLine("本体MODに選択されたファイルは存在しません。");
-                if (DisplayVersion.Text == "") msgBuilder2.AppendLine("バージョンIDを入力してください。");
-                else if (!File.Exists(Path.Combine(mcPath, "versions", DisplayVersion.Text, $"{DisplayVersion.Text}.jar")))
+                if (PremiseModTextBox.Text == "") msgBuilder2.AppendLine("前提MODを選択してください。");
+                else if (!File.Exists(PremiseModTextBox.Text)) msgBuilder2.AppendLine("前提MODに選択されたファイルは存在しません。");
+                if (BodyModTextBox.Text == "") msgBuilder2.AppendLine("本体MODを選択してください。");
+                else if (!File.Exists(BodyModTextBox.Text)) msgBuilder2.AppendLine("本体MODに選択されたファイルは存在しません。");
+                if (VersionNameTextBox.Text == "") msgBuilder2.AppendLine("バージョンIDを入力してください。");
+                else if (!File.Exists(Path.Combine(mcPath, "versions", VersionNameTextBox.Text, $"{VersionNameTextBox.Text}.jar")))
                 {
                     msgBuilder2.AppendLine("入力されたバージョン名を持つバージョンは見つかりませんでした。");
                 }
@@ -215,20 +207,18 @@ namespace DQM_Installer
             }
 
             var msgBuilder = new StringBuilder();
-            if (PremiseMod.Text == "") msgBuilder.AppendLine("前提MODを選択してください。");
-            else if (!File.Exists(PremiseMod.Text)) msgBuilder.AppendLine("前提MODに選択されたファイルは存在しません。");
-            if (BodyMod.Text == "") msgBuilder.AppendLine("本体MODを選択してください。");
-            else if (!File.Exists(BodyMod.Text)) msgBuilder.AppendLine("本体MODに選択されたファイルは存在しません。");
-            if (Sound.Text == "") msgBuilder.AppendLine("DQM音声・BGMを選択してください。");
-            else if (!File.Exists(Sound.Text)) msgBuilder.AppendLine("DQM音声・BGMに選択されたファイルは存在しません。");
-            if (Forge.Text == "") msgBuilder.AppendLine("Forgeを選択してください。");
-            else if (!File.Exists(Forge.Text)) msgBuilder.AppendLine("Forgeに選択されたファイルは存在しません。");
-            if (ForgeLib.Text == "") msgBuilder.AppendLine("Forge libファイルを選択してください。");
-            else if (!File.Exists(ForgeLib.Text)) msgBuilder.AppendLine("Forge libファイルに選択されたファイルは存在しません。");
-            if (Skin.Text == "") msgBuilder.AppendLine("スキンを選択してください。");
-            else if (!File.Exists(Skin.Text)) msgBuilder.AppendLine("スキンに選択されたファイルは存在しません。");
+            if (PremiseModTextBox.Text == "") msgBuilder.AppendLine("前提MODを選択してください。");
+            else if (!File.Exists(PremiseModTextBox.Text)) msgBuilder.AppendLine("前提MODに選択されたファイルは存在しません。");
+            if (BodyModTextBox.Text == "") msgBuilder.AppendLine("本体MODを選択してください。");
+            else if (!File.Exists(BodyModTextBox.Text)) msgBuilder.AppendLine("本体MODに選択されたファイルは存在しません。");
+            if (BgmTextBox.Text == "") msgBuilder.AppendLine("DQM音声・BGMを選択してください。");
+            else if (!File.Exists(BgmTextBox.Text)) msgBuilder.AppendLine("DQM音声・BGMに選択されたファイルは存在しません。");
+            if (ForgeTextBox.Text == "") msgBuilder.AppendLine("Forgeを選択してください。");
+            else if (!File.Exists(ForgeTextBox.Text)) msgBuilder.AppendLine("Forgeに選択されたファイルは存在しません。");
+            if (SkinTextBox.Text == "") msgBuilder.AppendLine("スキンを選択してください。");
+            else if (!File.Exists(SkinTextBox.Text)) msgBuilder.AppendLine("スキンに選択されたファイルは存在しません。");
 
-            if (DisplayVersion.Text == "") msgBuilder.AppendLine("バージョン表示名を入力してください。");
+            if (VersionNameTextBox.Text == "") msgBuilder.AppendLine("バージョン表示名を入力してください。");
 
             if (msgBuilder.ToString() != "")
             {
@@ -242,10 +232,10 @@ namespace DQM_Installer
 
         private async void Update()
         {
-            var premisePath = PremiseMod.Text;
-            var displayVersion = DisplayVersion.Text;
+            var premisePath = PremiseModTextBox.Text;
+            var displayVersion = VersionNameTextBox.Text;
             var jarPath = $"{mcPath}\\versions\\{displayVersion}\\{displayVersion}.jar";
-            var bodyPath = BodyMod.Text;
+            var bodyPath = BodyModTextBox.Text;
             await Task.Run(() =>
             {
                 ExtractPreAndBody(premisePath, jarPath, bodyPath, true);
@@ -259,25 +249,22 @@ namespace DQM_Installer
             await Task.Run(() => {
                 try
                 {
-
                     SendProgress("DQM用バージョンを作成しています。");
 
                     string displayVersion = "";
                     string forgePath = "";
                     string premisePath = "";
                     string bodyPath = "";
-                    string libPath = "";
                     string sePath = "";
                     string skinPath = "";
                     Dispatcher.Invoke(() =>
                     {
-                        displayVersion = DisplayVersion.Text;
-                        forgePath = Forge.Text;
-                        premisePath = PremiseMod.Text;
-                        bodyPath = BodyMod.Text;
-                        libPath = ForgeLib.Text;
-                        sePath = Sound.Text;
-                        skinPath = Skin.Text;
+                        displayVersion = VersionNameTextBox.Text;
+                        forgePath = ForgeTextBox.Text;
+                        premisePath = PremiseModTextBox.Text;
+                        bodyPath = BodyModTextBox.Text;
+                        sePath = BgmTextBox.Text;
+                        skinPath = SkinTextBox.Text;
                     });
 
                     if (!File.Exists($"{mcPath}\\versions\\1.5.2\\1.5.2.jar"))
@@ -302,8 +289,6 @@ namespace DQM_Installer
                     // JARファイルコピー
                     File.Copy($"{mcPath}\\versions\\1.5.2\\1.5.2.jar", jarPath, true);
 
-                    SendProgress("DQM用バージョンを作成しています。");
-
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
                     // JSONの書き込み
@@ -323,13 +308,35 @@ namespace DQM_Installer
                         File.WriteAllText($"{mcPath}\\versions\\{displayVersion}\\{displayVersion}.json", vJson.ToString());
 
                         UpdateProgressBar(1);
-                        using (var libArchive = ZipFile.OpenRead(libPath))
+
+                        Directory.CreateDirectory(tempPath);
+                        
+                        procedure = Procedure.DownloadLib;
+                        SendProgress("ダウンロード中 (1/3)");
+                        DownloadFile("https://downloads.ctfassets.net/jmfsolylwbqz/3EzfRFcQcooRbSvqroozOq/a2232bc4b5fc80b284bd3dc690b68ed0/fml_libs15.zip", "fml_libs15.zip");
+
+                        procedure = Procedure.DownloadDeobfuscationData;
+                        SendProgress("ダウンロード中 (2/3)");
+                        DownloadFile("https://www.dropbox.com/s/9711lwh5q4jq6ju/deobfuscation_data_1.5.2.zip?dl=1", "deobfuscation_data_1.5.2.zip");
+
+                        if (!File.Exists(GetTempFilePath("resources.zip")))
                         {
-                            SendProgress("libファイルの展開中です。");
+                            SendProgress("ダウンロード中 (3/3)");
+                            procedure = Procedure.DownloadVanillaSE;
+                            DownloadFile("https://www.dropbox.com/s/v959196lzzgnzgf/resources.zip?dl=1", "resources.zip");
+                        }
+
+                        // libファイルの展開・書き込み
+                        using (var libArchive = ZipFile.OpenRead(GetTempFilePath("fml_libs15.zip")))
+                        {
+                            SendProgress("ライブラリの展開中");
                             libArchive.ExtractToDirectory(mcPath + "\\lib", true);
                         }
 
-                        SendProgress("プロファイルの登録中です。");
+                        SendProgress("ライブラリのコピー中");
+                        File.Copy(GetTempFilePath("deobfuscation_data_1.5.2.zip"), Path.Combine(mcPath, "lib", "deobfuscation_data_1.5.2.zip"), true);
+
+                        SendProgress("プロファイルの登録中");
                         var launcherProfilePath = mcPath + "\\launcher_profiles.json";
                         if (!File.Exists(launcherProfilePath))
                         {
@@ -342,34 +349,36 @@ namespace DQM_Installer
                         reader.Close();
 
                         var jObject = JObject.Parse(json);
-                        var profile = new JObject();
-                        profile["created"] = DateTime.Now.ToString();
-                        profile["lastVersionId"] = displayVersion;
-                        profile["name"] = displayVersion;
-                        profile["type"] = "custom";
+                        var profile = new JObject
+                        {
+                            ["created"] = DateTime.Now.ToString(),
+                            ["lastVersionId"] = displayVersion,
+                            ["name"] = displayVersion,
+                            ["type"] = "custom"
+                        };
                         jObject["profiles"][Membership.GeneratePassword(32, 0)] = profile;
 
                         File.WriteAllText(launcherProfilePath, jObject.ToString());
 
-                        SendProgress("クリーンアップ中です。");
+                        SendProgress("クリーンアップ中");
                         if (Directory.Exists(tempPath))
                         {
                             try
                             {
-                                Directory.Delete(Path.Combine(tempPath, "forge"), true);
-                                Directory.Delete(Path.Combine(tempPath, "premise"), true);
-                                Directory.Delete(Path.Combine(tempPath, "skin"), true);
+                                Directory.Delete(GetTempFilePath("forge"), true);
+                                Directory.Delete(GetTempFilePath("premise"), true);
+                                Directory.Delete(GetTempFilePath("skin"), true);
                             } catch(Exception e) { }
                         }
 
                         UpdateProgressBar(2);
-                        procedure = "xf";
-                        SendProgress("Forgeの展開中です。");
+                        procedure = Procedure.ExtractForge;
+                        SendProgress("Forgeの展開中");
                         var szPath = Path.Combine(exePath, "bin/7za.exe");
                         ExtractToDirectoryWithSevenZip(forgePath, $"{tempPath}\\forge");
                         UpdateProgressBar(3);
-                        procedure = "aj";
-                        SendProgress("JARファイルの作成中です。");
+                        procedure = Procedure.AddToJar;
+                        SendProgress("JARファイルの作成中");
                         AddEntryToZipFileWithSevenZip(jarPath, $"{tempPath}\\forge\\*");
                         DeleteEntryFromZipFile(jarPath, "META-INF");
                         UpdateProgressBar(4);
@@ -378,31 +387,31 @@ namespace DQM_Installer
 
                         using (var seArchive = ZipFile.OpenRead(sePath))
                         {
-                            SendProgress("DQM SE/BGMの展開中です。");
+                            SendProgress("DQM SE/BGMの展開中");
                             seArchive.ExtractToDirectory(mcPath, true);
                         }
                         UpdateProgressBar(8);
 
-                        
-                        if (!File.Exists(Path.Combine(tempPath, "resources.zip")))
+                        SendProgress("バニラSEの展開中です。");
+                        using (var f = ZipFile.OpenRead(Path.Combine(Environment.GetEnvironmentVariable("temp"), "extract-dqm\\resources.zip")))
                         {
-                            SendProgress("バニラSEのダウンロード中です。");
-
-                            var soundClient = new WebClient();
-                            soundClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(MCSoundDownloadProgressChanged);
-                            soundClient.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(OnMCSoundDownloadCompleted);
-
-                            soundClient.DownloadFileAsync(new Uri("https://app.chikach.net/dist/resources.zip"), Path.Combine(tempPath, "resources.zip"));
+                            f.ExtractToDirectory(Environment.GetEnvironmentVariable("appdata") + "\\.minecraft", true);
                         }
-                        else
-                        {
-                            OnMCSoundDownloadCompleted(null, null);
-                        }
+
+                        SetSkin();
                     }
                 }
                 catch (Exception e)
                 {
-                    ShowErrorMessage(e.Message);
+                    if (e.Message == "パスに無効な文字が含まれています。")
+                    {
+                        ShowErrorMessage("「ランチャーでのバージョン表記」の「<バージョン名>」にDQMのバージョンを入力してください");
+                    }
+                    else
+                    {
+                        ShowErrorMessage(e.Message);
+                    }
+                    Debug.Print(e.ToString());
                     CancelInstalling();
                 }
                 
@@ -414,11 +423,11 @@ namespace DQM_Installer
         {
             int baseNum;
             if (isUpdate) baseNum = 0; else baseNum = 4;
-            procedure = "xp";
+            procedure = Procedure.ExtractPremiseMod;
             SendProgress("前提MODの展開中です。");
             ExtractToDirectoryWithSevenZip(premisePath, $"{tempPath}\\premise");
             UpdateProgressBar(baseNum + 1);
-            procedure = "aj";
+            procedure = Procedure.AddToJar;
             SendProgress("JARファイルの作成中です。");
             AddEntryToZipFileWithSevenZip(jarPath, $"{tempPath}\\premise\\*");
             UpdateProgressBar(baseNum + 2);
@@ -427,6 +436,28 @@ namespace DQM_Installer
             Directory.CreateDirectory(Path.Combine(mcPath, "mods"));
             File.Copy(bodyPath, mcPath + $"\\mods\\{bodyPath.Split('\\').Last()}", true);
             UpdateProgressBar(baseNum + 3);
+        }
+
+        private void DownloadFile(string url, string fileName)
+        {
+            var client = new WebClient();
+            client.DownloadFileCompleted += Client_DownloadFileCompleted;
+            client.DownloadProgressChanged += DownloadProgressChanged;
+
+            var syncObject = new object();
+            lock (syncObject) {
+                client.DownloadFileAsync(new Uri(url), Path.Combine(tempPath, fileName), syncObject);
+
+                Monitor.Wait(syncObject);
+            }
+        }
+
+        private void Client_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            lock (e.UserState)
+            {
+                Monitor.Pulse(e.UserState);
+            }
         }
 
         private void CancelInstalling()
@@ -524,42 +555,34 @@ namespace DQM_Installer
             var percent = result.Substring(0, e.Data.Trim().IndexOf("%"));
             switch (procedure)
             {
-                case "xf":
+                case Procedure.ExtractForge:
                     SendProgress($"Forgeの展開中です。({percent}%)");
                     break;
-                case "aj":
+                case Procedure.AddToJar:
                     SendProgress($"JARファイルの作成中です。({percent}%)");
                     break;
-                case "xp":
+                case Procedure.ExtractPremiseMod:
                     SendProgress($"前提MODの展開中です。({percent}%)");
                     break;
             }
         }
 
-        private void MCSoundDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            var percent = Math.Round(((float)e.BytesReceived / (float)e.TotalBytesToReceive * 100), 1);
-            SendProgress($"バニラSEをダウンロードしています。({percent}%)");
-        }
-
-        private async void OnMCSoundDownloadCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
-        {
-            await Task.Run(() =>
+            var percent = Math.Round((float)e.BytesReceived / e.TotalBytesToReceive * 100, 1);
+            
+            switch (procedure)
             {
-                if (e != null && e.Error != null)
-                {
-                    ShowErrorMessage($"Minecraft SEファイルのダウンロードに失敗しました。({e.Error.Message})");
-                    return;
-
-                }
-                SendProgress("バニラSEの展開中です。");
-                using (var f = ZipFile.OpenRead(Path.Combine(Environment.GetEnvironmentVariable("temp"), "extract-dqm\\resources.zip")))
-                {
-                    f.ExtractToDirectory(Environment.GetEnvironmentVariable("appdata") + "\\.minecraft", true);
-                }
-
-                SetSkin();
-            });
+                case Procedure.DownloadLib:
+                    SendProgress($"バニラSEをダウンロードしています。(1/2) ({percent}%)");
+                    break;
+                case Procedure.DownloadDeobfuscationData:
+                    SendProgress($"ライブラリをダウンロードしています。(2/2) ({percent}%)");
+                    break;
+                case Procedure.DownloadVanillaSE:
+                    SendProgress($"バニラSEをダウンロードしています。({percent}%)");
+                    break;
+            }
         }
 
         private void SetSkin()
@@ -573,8 +596,8 @@ namespace DQM_Installer
             var displayVersion = "";
             Dispatcher.Invoke(() =>
             {
-                skinPath = Skin.Text;
-                displayVersion = DisplayVersion.Text;
+                skinPath = SkinTextBox.Text;
+                displayVersion = VersionNameTextBox.Text;
             });
 
             var launcherAccountsPath = Environment.GetEnvironmentVariable("appdata") + "\\.minecraft\\launcher_accounts.json";
@@ -611,7 +634,7 @@ namespace DQM_Installer
                 {
                     s.AppendLine(item);
                 }
-                MessageBox.Show($"Minecraftランチャーにログインされているアカウントにプレイヤーが複数存在するため、以下のすべてのプレイヤーに対してスキンを設定します。\n\n{s.ToString()}", "スキン設定", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Minecraftランチャーにログインされているアカウントにプレイヤーが複数存在するため、以下のすべてのプレイヤーに対してスキンを設定します。\n\n{s}", "スキン設定", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else if (accountList.Count() == 0)
             {
@@ -640,6 +663,11 @@ namespace DQM_Installer
             {
                 SetSkin();
             });
+        }
+
+        private string GetTempFilePath(string fileName)
+        {
+            return Path.Combine(tempPath, fileName);
         }
 
         /// <summary>
@@ -694,12 +722,12 @@ namespace DQM_Installer
             }
         }
 
-        private void ReferSkin_Click(object sender, RoutedEventArgs e)
+        private void BrowseSkinButton_Click(object sender, RoutedEventArgs e)
         {
             var path = ShowFilePicker("スキンファイル|*.png", "スキンの選択");
             if (path != null)
             {
-                Skin.Text = path;
+                SkinTextBox.Text = path;
             }
         }
 
@@ -713,20 +741,6 @@ namespace DQM_Installer
             ChangeEnabled(true);
         }
 
-        private void DLMod_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start("https://dqm4mod.wixsite.com/home");
-        }
-
-        private void DLForge_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start("http://adfoc.us/serve/?id=27122854926913");
-        }
-
-        private void DLForgeLib_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start("http://files.minecraftforge.net/fmllibs/fml_libs15.zip");
-        }
     }
 
     /// <summary>
@@ -794,5 +808,15 @@ namespace DQM_Installer
                 }
             }
         }
+    }
+
+    enum Procedure
+    {
+        ExtractForge,
+        ExtractPremiseMod,
+        AddToJar,
+        DownloadVanillaSE,
+        DownloadLib,
+        DownloadDeobfuscationData,
     }
 }

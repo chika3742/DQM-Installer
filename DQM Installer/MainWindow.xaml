@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DQM_Installer"
         mc:Ignorable="d"
-        Title="DQM Installer" Height="511.333" Width="710.463" FontFamily="/DQM Installer;component/Fonts/#Rounded Mgen+ 2c medium" MinWidth="630" MinHeight="450" ResizeMode="CanMinimize">
+        Title="DQM Installer" Width="710.463" FontFamily="/DQM Installer;component/Fonts/#Rounded Mgen+ 2c medium" MinWidth="630" MinHeight="450" ResizeMode="CanMinimize" Height="600">
     <Window.Resources>
         <Storyboard x:Key="BtnAnimation">
             <ThicknessAnimationUsingKeyFrames
                 Storyboard.TargetName="InstallBtn"
                 Storyboard.TargetProperty="(Button.Margin)" >
-                <EasingThicknessKeyFrame KeyTime="0:0:0.4" Value="-250,0,0,10">
+                <EasingThicknessKeyFrame KeyTime="0:0:0.4" Value="-250,0,0,0">
                     <EasingThicknessKeyFrame.EasingFunction>
                         <SineEase EasingMode="EaseInOut"/>
                     </EasingThicknessKeyFrame.EasingFunction>
@@ -40,7 +40,7 @@
             <ThicknessAnimationUsingKeyFrames
                 Storyboard.TargetName="InstallBtn"
                 Storyboard.TargetProperty="(Button.Margin)" >
-                <EasingThicknessKeyFrame KeyTime="0:0:0.4" Value="0,0,0,10">
+                <EasingThicknessKeyFrame KeyTime="0:0:0.4" Value="0,0,0,0">
                     <EasingThicknessKeyFrame.EasingFunction>
                         <SineEase EasingMode="EaseInOut"/>
                     </EasingThicknessKeyFrame.EasingFunction>
@@ -66,41 +66,63 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
     </Window.Resources>
-    <Grid>
-        <Button x:Name="InstallBtn" Content="インストール" HorizontalAlignment="Center" Margin="0,0,0,10" VerticalAlignment="Bottom" Width="271" Height="37" FontSize="20" Click="Install_Click" Panel.ZIndex="100"/>
-        <Label Content="DQM 前提MOD" HorizontalAlignment="Left" Margin="30,38,0,0" VerticalAlignment="Top" FontSize="18" Height="41" VerticalContentAlignment="Center"/>
-        <Label Content="DQM 本体MOD" HorizontalAlignment="Left" Margin="30,80,0,0" VerticalAlignment="Top" FontSize="18" Height="41" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="PremiseMod" HorizontalAlignment="Right" Height="41" Margin="0,38,200,0" VerticalAlignment="Top" Width="242" Padding="0,0,0,3" FontSize="16" MaxLines="1" IsReadOnly="True" PreviewDragOver="TextBox_PreviewDragOver" Drop="OnDropped"/>
-        <Button x:Name="ReferPremiseMod" Content="参照" HorizontalAlignment="Right" Margin="0,49,130,0" VerticalAlignment="Top" Width="60" Height="30" FontSize="16" Padding="0,4" Click="ReferPremiseMOD_Click"/>
-        <TextBox x:Name="BodyMod" HorizontalAlignment="Right" Height="41" Margin="0,79,200,0" VerticalAlignment="Top" Width="242" Padding="0,0,0,3" FontSize="16" MaxLines="1" IsReadOnly="True" PreviewDragOver="TextBox_PreviewDragOver" Drop="OnDropped"/>
-        <Button x:Name="ReferBodyMod" Content="参照" HorizontalAlignment="Right" Margin="0,91,130,0" VerticalAlignment="Top" Width="60" Height="30" FontSize="16" Padding="0,4" Click="ReferBodyMOD_Click"/>
-        <Label Content="DQM 音声・BGM" HorizontalAlignment="Left" Margin="30,123,0,0" VerticalAlignment="Top" FontSize="18" Height="41" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="Sound" HorizontalAlignment="Right" Height="41" Margin="0,123,200,0" VerticalAlignment="Top" Width="242" Padding="0,0,0,3" FontSize="16" MaxLines="1" IsReadOnly="True" PreviewDragOver="TextBox_PreviewDragOver" Drop="OnDropped"/>
-        <Button x:Name="ReferSound" Content="参照" HorizontalAlignment="Right" Margin="0,134,130,0" VerticalAlignment="Top" Width="60" Height="30" FontSize="16" Padding="0,4" Click="ReferDQMSound_Click"/>
-        <Label Content="Forge 1.5.2 Universal" HorizontalAlignment="Left" Margin="30,165,0,0" VerticalAlignment="Top" FontSize="18" Height="41" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="Forge" HorizontalAlignment="Right" Height="41" Margin="0,165,200,0" VerticalAlignment="Top" Width="242" Padding="0,0,0,3" FontSize="16" MaxLines="1" IsReadOnly="True" PreviewDragOver="TextBox_PreviewDragOver" Drop="OnDropped"/>
-        <Button x:Name="ReferForge" Content="参照" HorizontalAlignment="Right" Margin="0,176,130,0" VerticalAlignment="Top" Width="60" Height="30" FontSize="16" Padding="0,4" Click="ReferForge_Click"/>
-        <Label Content="Forge libファイル" HorizontalAlignment="Left" Margin="30,206,0,0" VerticalAlignment="Top" FontSize="18" Height="41" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="ForgeLib" HorizontalAlignment="Right" Height="41" Margin="0,204,200,0" VerticalAlignment="Top" Width="242" Padding="0,0,0,3" FontSize="16" MaxLines="1" IsReadOnly="True" PreviewDragOver="TextBox_PreviewDragOver" Drop="OnDropped"/>
-        <Button x:Name="ReferForgeLib" Content="参照" HorizontalAlignment="Right" Margin="0,215,130,0" VerticalAlignment="Top" Width="60" Height="30" FontSize="16" Padding="0,4" Click="ReferLib_Click"/>
-        <TextBlock HorizontalAlignment="Center" Margin="10,7,110,0" TextWrapping="Wrap" Text="右のボタンをクリックして動画をご覧になってからご利用ください。" VerticalAlignment="Top" Foreground="Red" FontWeight="Bold" TextDecorations="{x:Null}" FontSize="16" Width="502" TextAlignment="Center" Padding="0"/>
-        <Button Content="YouTube" HorizontalAlignment="Right" Margin="0,7,30,0" VerticalAlignment="Top" Width="75" Height="24" Padding="0" Click="YouTubeButton_Click"/>
-        <Label x:Name="TextSkinFile" Content="スキンファイル(オプション)" HorizontalAlignment="Left" Margin="30,248,0,0" VerticalAlignment="Top" FontSize="16" Height="41" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="Skin" HorizontalAlignment="Right" Height="41" Margin="0,248,200,0" VerticalAlignment="Top" Width="242" Padding="0,0,0,3" FontSize="16" MaxLines="1" Drop="OnDropped" PreviewDragOver="TextBox_PreviewDragOver" IsReadOnly="True"/>
-        <Rectangle HorizontalAlignment="Left" Height="2" Margin="30,77,0,0" VerticalAlignment="Top" Width="200" Fill="#FF898989"/>
-        <Rectangle HorizontalAlignment="Left" Height="2" Margin="30,119,0,0" VerticalAlignment="Top" Width="200" Fill="#FF898989"/>
-        <Rectangle HorizontalAlignment="Left" Height="2" Margin="30,162,0,0" VerticalAlignment="Top" Width="200" Fill="#FF898989"/>
-        <Rectangle HorizontalAlignment="Left" Height="2" Margin="30,204,0,0" VerticalAlignment="Top" Width="200" Fill="#FF898989"/>
-        <Rectangle HorizontalAlignment="Left" Height="2" Margin="30,246,0,0" VerticalAlignment="Top" Width="200" Fill="#FF898989"/>
-        <TextBlock HorizontalAlignment="Center" Margin="0,0,0,57" TextWrapping="Wrap" Text="ドラッグ＆ドロップでファイル選択することもできます。" VerticalAlignment="Bottom" Foreground="#FF4D4D4D"/>
-        <ProgressBar x:Name="ProgressBar" HorizontalAlignment="Left" Height="23" Margin="360,0,0,18" VerticalAlignment="Bottom" Width="250" Opacity="0"/>
-        <Label x:Name="ProgressLabel" Content="Preparing..." HorizontalAlignment="Left" Margin="360,0,0,18" VerticalAlignment="Bottom" Height="23" VerticalContentAlignment="Center" Padding="5,0" Width="250" HorizontalContentAlignment="Center" Opacity="0" Foreground="#DDFFFFFF"/>
-        <Rectangle HorizontalAlignment="Left" Height="2" Margin="30,287,0,0" VerticalAlignment="Top" Width="200" Fill="#FF898989"/>
-        <Label x:Name="TextVersionName" Content="ランチャーでのバージョン表記" HorizontalAlignment="Left" Margin="30,289,0,0" VerticalAlignment="Top" FontSize="16" Height="41" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="DisplayVersion" HorizontalAlignment="Right" Height="41" Margin="0,289,95,0" VerticalAlignment="Top" Width="242" Padding="0,0,0,3" FontSize="16" MaxLines="1" Text="DQMV v(バージョン)"/>
-        <Rectangle HorizontalAlignment="Left" Height="2" Margin="30,330,0,0" VerticalAlignment="Top" Width="200" Fill="#FF898989"/>
-        <Button x:Name="ReferSkin" Content="参照" HorizontalAlignment="Right" Margin="0,259,130,0" VerticalAlignment="Top" Width="60" Height="30" FontSize="16" Padding="0,4" Click="ReferSkin_Click"/>
-        <ComboBox x:Name="ModeComboBox" HorizontalAlignment="Right" Margin="0,0,167,97" FontSize="18" VerticalAlignment="Bottom" Width="275" Height="41" SelectedIndex="0" VerticalContentAlignment="Center" SelectionChanged="ComboBox_SelectionChanged">
+
+    <Grid Margin="16,16,16,16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition Height="1.3*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2.5*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="右のボタンをクリックして動画をご覧になってからご利用ください。" Foreground="Red" FontWeight="Bold" FontSize="16" TextAlignment="Center" />
+        <Button Grid.Row="0" Grid.Column="2" Content="YouTube"  Width="75" Height="24" Padding="0" Click="YouTubeButton_Click"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Text="ドラッグ＆ドロップでファイル選択することもできます。" Foreground="#FF4D4D4D" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,8,0,0"/>
+
+        <Label Grid.Row="2" Grid.Column="0" Content="DQM 前提MOD" FontSize="18" VerticalAlignment="Center" />
+        <Rectangle Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" Height="2" VerticalAlignment="Bottom" Width="200" Fill="#FF898989"/>
+        <TextBox Grid.Row="2" Grid.Column="1" x:Name="PremiseModTextBox" Height="41" FontSize="16" MaxLines="1" IsReadOnly="True" PreviewDragOver="TextBox_PreviewDragOver" Drop="OnDropped" Margin="0,8,0,8"/>
+        <Button Grid.Row="2" Grid.Column="2" x:Name="BrowsePremiseModButton" Content="参照" Width="60" Height="30" FontSize="16" Padding="0,4" Click="BrowsePremiseModButton_Click" HorizontalAlignment="Left" Margin="8,0,0,0"/>
+
+        <Label Grid.Row="3" Grid.Column="0" Content="DQM 本体MOD" FontSize="18" VerticalAlignment="Center" />
+        <Rectangle Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" Height="2" VerticalAlignment="Bottom" Width="200" Fill="#FF898989"/>
+        <TextBox Grid.Row="3" Grid.Column="1" x:Name="BodyModTextBox" Height="41" FontSize="16" MaxLines="1" IsReadOnly="True" PreviewDragOver="TextBox_PreviewDragOver" Drop="OnDropped" Margin="0,8,0,8"/>
+        <Button Grid.Row="3" Grid.Column="2" x:Name="BrowseBodyModButton" Content="参照" Width="60" Height="30" FontSize="16" Padding="0,4" Click="BrowseBodyModButton_Click" HorizontalAlignment="Left" Margin="8,0,0,0"/>
+
+        <Label Grid.Row="4" Grid.Column="0" Content="DQM 音声・BGM" FontSize="18" VerticalAlignment="Center" />
+        <Rectangle Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" Height="2" VerticalAlignment="Bottom" Width="200" Fill="#FF898989"/>
+        <TextBox Grid.Row="4" Grid.Column="1" x:Name="BgmTextBox" Height="41"  FontSize="16" MaxLines="1" IsReadOnly="True" PreviewDragOver="TextBox_PreviewDragOver" Drop="OnDropped" Margin="0,8,0,8"/>
+        <Button Grid.Row="4" Grid.Column="2" x:Name="BrowseBgmButton" Content="参照" Width="60" Height="30" FontSize="16" Padding="0,4" Click="BrowseBgmButton_Click" HorizontalAlignment="Left" Margin="8,0,0,0"/>
+
+        <Label Grid.Row="5" Grid.Column="0" Content="Forge 1.5.2 Universal" FontSize="18" VerticalAlignment="Center" />
+        <Rectangle Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" Height="2" VerticalAlignment="Bottom" Width="200" Fill="#FF898989"/>
+        <TextBox Grid.Row="5" Grid.Column="1" x:Name="ForgeTextBox" Height="41"  FontSize="16" MaxLines="1" IsReadOnly="True" PreviewDragOver="TextBox_PreviewDragOver" Drop="OnDropped" Margin="0,8,0,8"/>
+        <Button Grid.Row="5" Grid.Column="2" x:Name="BrowseForgeButton" Content="参照" Width="60" Height="30" FontSize="16" Padding="0,4" Click="BrowseForgeButton_Click" HorizontalAlignment="Left" Margin="8,0,0,0"/>
+
+        <Label Grid.Row="6" Grid.Column="0" x:Name="SkinLabel" Content="スキン" FontSize="18" VerticalAlignment="Center" />
+        <Rectangle Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left" Height="2" VerticalAlignment="Bottom" Width="200" Fill="#FF898989"/>
+        <TextBox Grid.Row="6" Grid.Column="1" x:Name="SkinTextBox" Height="41"  FontSize="16" MaxLines="1" IsReadOnly="True" PreviewDragOver="TextBox_PreviewDragOver" Drop="OnDropped" Margin="0,8,0,8"/>
+        <Button Grid.Row="6" Grid.Column="2" x:Name="BrowseSkinButton" Content="参照" Width="60" Height="30" FontSize="16" Padding="0,4" Click="BrowseSkinButton_Click" HorizontalAlignment="Left" Margin="8,0,0,0"/>
+
+        <Label Grid.Row="7" Grid.Column="0" x:Name="VersionNameLabel" Content="ランチャーでのバージョン表記" FontSize="18" VerticalAlignment="Center" />
+        <Rectangle Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" Height="2" VerticalAlignment="Bottom" Width="200" Fill="#FF898989"/>
+        <TextBox Grid.Row="7" Grid.Column="1" x:Name="VersionNameTextBox" Height="41"  FontSize="16" MaxLines="1" Margin="0,8,0,8" Text="DQMV v&lt;バージョン&gt;"/>
+
+        <Label Grid.Row="8" Grid.Column="0" Content="モード" FontSize="18" VerticalAlignment="Center" />
+        <ComboBox Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2" x:Name="ModeComboBox" FontSize="18" Height="41" SelectedIndex="0" SelectionChanged="ComboBox_SelectionChanged" Margin="0,8,32,8">
             <ComboBox.Items>
                 <ComboBoxItem ToolTip="初回にDQMをインストールする場合のオプションです。" FontSize="18">通常インストール</ComboBoxItem>
                 <ComboBoxItem ToolTip="DQMをアップデートする際のオプションです。" FontSize="18">アップデート</ComboBoxItem>
@@ -108,9 +130,10 @@
                 <ComboBoxItem ToolTip="マルチサーバーファイルに対してインストールする場合のオプションです。" FontSize="18" IsEnabled="False">マルチサーバーファイル(未実装)</ComboBoxItem>
             </ComboBox.Items>
         </ComboBox>
-        <Label Content="モード選択" HorizontalAlignment="Left" Margin="33,0,0,97" VerticalAlignment="Bottom" FontSize="18" Height="41" VerticalContentAlignment="Center"/>
-        <Button x:Name="DLMod" Content="ダウンロード" HorizontalAlignment="Right" Margin="0,49,16,0" VerticalAlignment="Top" Width="95" Height="115" FontSize="14" Padding="0,4" Background="#FFFB792E" BorderBrush="#FFFF8812" Click="DLMod_Click"/>
-        <Button x:Name="DLForge" Content="ダウンロード" HorizontalAlignment="Right" Margin="0,176,16,0" VerticalAlignment="Top" Width="95" Height="30" FontSize="14" Padding="0,4" Background="#FFFB792E" BorderBrush="#FFFF8812" Click="DLForge_Click"/>
-        <Button x:Name="DLForgeLib" Content="ダウンロード" HorizontalAlignment="Right" Margin="0,215,16,0" VerticalAlignment="Top" Width="95" Height="30" FontSize="14" Padding="0,4" Background="#FFFB792E" BorderBrush="#FFFF8812" Click="DLForgeLib_Click"/>
+
+        <Button Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="3" x:Name="InstallBtn" Content="インストール" HorizontalAlignment="Center" VerticalAlignment="Center" Width="271" Height="37" FontSize="20" Click="Install_Click" Panel.ZIndex="100" Cursor="Hand" />
+        <ProgressBar Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="3" x:Name="ProgressBar" Height="23" Width="250" Opacity="0" HorizontalAlignment="Right" Margin="0,0,32,0" />
+        <Label Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="3" x:Name="ProgressLabel" Content="Preparing..." Height="23" Padding="5,0" Width="250" Opacity="0" Foreground="#DDFFFFFF" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Right" Margin="0,0,32,0"/>
     </Grid>
+
 </Window>
